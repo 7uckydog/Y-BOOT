@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.start.yboot.notepad.NotePadMapper">
+    <!-- 원본 데이터 INSERT   -->
+    <insert id="insOriginDate" parameterType="com.start.yboot.notepad.NotePadDTO">
+        INSERT INTO origin_data (
+        location
+        , pm25
+        , pm10
+        , info_date
+        , location_code
+        ) VALUES (
+        #{location}
+        , #{pm25}
+        , #{pm10}
+        , #{info_date}
+        , #{location_code}
+        )
+    </insert>
+</mapper>
