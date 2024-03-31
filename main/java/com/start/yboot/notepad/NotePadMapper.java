@@ -2,9 +2,13 @@ package com.start.yboot.notepad;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface NotePadMapper {
-    int insOriginDate(NotePadDTO vo);
+    int insOriginData(NotePadDTO vo);
 
-    int insertFitDate(String location);
+    int insertNullData();
+
+    int insertFitData(String location);
 }
