@@ -5,17 +5,84 @@
     <!-- 원본 데이터 INSERT   -->
     <insert id="insOriginDate" parameterType="com.start.yboot.notepad.NotePadDTO">
         INSERT INTO origin_data (
-        location
-        , pm25
-        , pm10
-        , info_date
-        , location_code
-        ) VALUES (
-        #{location}
-        , #{pm25}
-        , #{pm10}
-        , #{info_date}
-        , #{location_code}
-        )
+                                 data_seq
+                                ,location
+                                , pm25
+                                , pm10
+                                , info_date
+                                , location_code
+                                ) VALUES (
+                                  data_seq.NEXTVAL
+                                , #{location}
+                                , #{pm25}
+                                , #{pm10}
+                                , #{info_date}
+                                , #{location_code}
+                                )
+    </insert>
+
+    <!-- TODO NULL 데이터 INSERT -->
+
+    <!-- 경보 발령 추출 데이터 INSERT   -->
+    <insert id="insertFitDate" parameterType="String">
+        <!-- SELECT한 데이터 INSERT -->
+        INSERT INTO send_data (org_seq
+                             , af_info_date
+                             , af25_avg
+                             , af10_avg
+                             , alert_rank)
+        <!-- 경보 발령에 충족하는 데이터 SELECT -->
+        SELECT C.data_seq
+             , C.INFO_DATE_AF
+             , C.AF25_AVG
+             , C.AF10_AVG
+             , C.ALERT_RANK
+        FROM (
+                 SELECT B.data_seq
+                      , B.location
+                      , B.location_code
+                      , B.info_date
+                      , CASE
+                            <!-- 24시로 끝나는 날짜 데이터는 '01시'로 가공 후 + '하루' -->
+                            WHEN SUBSTR(B.info_Date, -2) = '24' THEN TO_CHAR(TO_DATE(REPLACE(B.info_Date,' 24',' 01'), 'YYYY-MM-DD HH24') + 1, 'YYYY-MM-DD HH24')
+                            <!-- 아닌 경우, 단순 + '1시간' -->
+                            ELSE TO_CHAR((TO_DATE(B.info_Date, 'YYYY-MM-DD HH24') + 1/24), 'YYYY-MM-DD HH24')
+                        END AS INFO_DATE_AF
+                      , B.PM25
+                      , B.AF25_AVG
+                      , B.PM10
+                      , B.AF10_AVG
+                      , CASE
+                            WHEN B.AF25_AVG >= 150 THEN '1'  <!-- AF2.5의 평균이 150 이상이면 1등급 (초미세먼지 경보) -->
+                            WHEN B.AF10_AVG >= 300 THEN '2'  <!-- AF10의  평균이 300 이상이면 2등급 (미세먼지   경보) -->
+                            WHEN B.AF25_AVG >= 75  THEN '3'  <!-- AF2.5의 평균이 75  이상이면 3등급 (초미세먼지 주의보) -->
+                            WHEN B.AF10_AVG >= 150 THEN '4'  <!-- AF10의  평균이 150 이상이면 4등급 (미세먼지  주의보) -->
+                            ELSE NULL
+                     END AS ALERT_RANK
+                 FROM(
+                         SELECT A.data_seq
+                              , A.location
+                              , A.location_code
+                              , A.info_date
+                              , A.pm25
+                              , A.pm10
+                              , (AF25 + pm25) / 2 AS AF25_AVG <!-- 한시간 후 데이터와 2.5 평균 -->
+                              , (AF10 + pm10) / 2 AS AF10_AVG <!-- 한시간 후 데이터와 10  평균 -->
+                         FROM
+                             (SELECT data_seq
+                                   , location
+                                   , location_code
+                                   , info_date
+                                   , NVL(pm25, '0') AS PM25
+                                   , NVL(pm10, '0') AS PM10
+                                   , LEAD (NVL(pm25, '0')) OVER (ORDER BY info_date) AS AF25
+                                   , LEAD (NVL(pm10, '0')) OVER (ORDER BY info_date) AS AF10
+                              FROM  origin_data
+                              WHERE LOCATION = #{location}
+                              ORDER BY info_date
+                             ) A
+                     ) B
+             )c
+        WHERE C.ALERT_RANK IS NOT NULL
     </insert>
 </mapper>

@@ -10,10 +10,16 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotePadDTO {
+public class NotePadResultDTO {
     private String location;
     private String pm25;
     private String pm10;
     private String info_date;
     private String location_code;
+
+    private String af25_avg;
+    private String af10_avg;
+    private String af_info_date;
+    private String alert_rank;
+    private String alert_rank_name;
 }

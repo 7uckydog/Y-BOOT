@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface NotePadMapper {
     int insOriginDate(NotePadDTO vo);
 
+    int insertFitDate(String location);
 }

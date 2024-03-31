@@ -55,21 +55,17 @@ public class NotePadComponent {
             }
 
             /* 원본 데이터 INSERT */
-            if(list.size() != 0){
-                int result = service.insOriginDate(list);
+            service.insOriginDate(list);
 
-                if(result < 1){
-                    throw new Exception("INSERT 데이터가 1건도 존재하지 않습니다.");
-                }
-            }
+            /* NULL data 리스트 추출 후, INSERT : 측정소 점검날 */
+            // NULL data 리스트 추출 완료
+            // TODO INSERT
+            service.checkNulllData(list);
 
-            /* TODO 평균 데이터 구하여 발령 정보 추출 및 INSERT */
+            // -- 측정소 리스트 출력 후, 측정소 별 추출 데이터 INSERT
+            service.insertFitDate(list);
 
-            // -- NULL 체크 : 측정소 점검날
-            // -- 측정소별 평균 계산 필요
-            // -- 두 가지 경보에 모두 적합할 경우, 경보 > 주의보 / 초미세먼지 >  (등급표 참고)
-            // -- 경보 추출 후 INSERT
-            // -- INSERT한 정보 SELECT하여 TCP send
+            // -- INSERT한 데이터 SELECT하여 TCP send
             // -- TCP 통신 시, 발생한 시간 순서대로 전송
 
 
