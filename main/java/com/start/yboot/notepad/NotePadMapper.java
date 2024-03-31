@@ -11,4 +11,6 @@ public interface NotePadMapper {
     int insertNullData();
 
     int insertFitData(String location);
+
+    List<NotePadResultDTO> selectSendData();
 }

@@ -16,7 +16,7 @@ public class NotePadComponent {
     @Autowired
     private NotePadService service;
 
-    public void run() throws Exception{
+    public List<NotePadResultDTO> run() throws Exception{
 
         List<NotePadDTO> list = new ArrayList<>();
         String file_name = "file/2023Y03M.json";
@@ -60,19 +60,20 @@ public class NotePadComponent {
             service.insOriginData(list);
 
             /* NULL data 리스트 추출 후, INSERT : 측정소 점검날 */
-            // NULL data 리스트 추출 완료
-            // TODO INSERT
             service.checkNulllData(list);
 
             /* 측정소 리스트 출력 후, 측정소 별 추출 데이터 INSERT */
-            service.insertFitData(list);
+            int result = service.insertFitData(list);
 
             /* 측정소 별 INSERT한 데이터 SELECT */
+            List<NotePadResultDTO> totalList = service.selectSendData();
 
+            if(result != totalList.size()){
+                throw new Exception("INSERT 데이터와 SELECT 데이터 갯수가 일치하지 않습니다.");
+            }
 
-            // TODO INSERT한 데이터 SELECT하여 TCP send
-            // TODO TCP 통신 시, 발생한 시간 순서대로 전송
-
+            /* SELECT 데이터 TCP send */
+            return totalList;
 
         } catch (IOException e) {
             throw new IOException(e);

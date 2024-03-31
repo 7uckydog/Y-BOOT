@@ -1,5 +1,7 @@
 package com.start.yboot.notepad;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,8 @@ import java.util.List;
 public class NotePadServiceImpl implements NotePadService{
     @Autowired
     private NotePadMapper mapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(NotePadServiceImpl.class);
 
     @Override
     @Transactional
@@ -34,22 +38,20 @@ public class NotePadServiceImpl implements NotePadService{
 
         // INSERT한 데이터 갯수와 List 갯수 비교
         if(list.size() != result){
-            throw new Exception("INSERT 데이터와 LIST 길이가 맞지 않음.");
+            throw new Exception("INSERT 데이터와 LIST 길이가 맞지 않습니다.");
         }
-
-        System.out.println("총 " + result + "건의 원본 데이터 INSERT");
+        logger.info("총 " + result + "건의 원본 데이터 INSERT");
 
     }
 
     @Override
     public void checkNulllData(List<NotePadDTO> list){
-        int result = 0;
-        result = mapper.insertNullData();
-        System.out.println("총 " + result + "건의 NULL(점검) 데이터 INSERT");
+        int result = mapper.insertNullData();
+        logger.info("총 " + result + "건의 NULL(점검) 데이터 INSERT");
     }
 
     @Override
-    public void insertFitData(List<NotePadDTO> list){
+    public int insertFitData(List<NotePadDTO> list){
         int total_result = 0;
 
         // 측정소 리스트 추출
@@ -64,11 +66,17 @@ public class NotePadServiceImpl implements NotePadService{
         // 측정소별 데이터 충족 체크 및 INSERT
         for(int i = 1; i < locationList.size(); i++){
             int result = mapper.insertFitData(locationList.get(i));
-            System.out.println(locationList.get(i) + "의 총 INSERT 데이터 갯수: " + result);
+            logger.info(locationList.get(i) + "의 총 INSERT 데이터 갯수: " + result);
             total_result = total_result + result;
         }
 
-        System.out.println("총 추출 데이터 INSERT 건: " + total_result + "건");
+        logger.info("총 추출 데이터 INSERT 건: " + total_result + "건");
 
+        return total_result;
+    }
+
+    @Override
+    public List<NotePadResultDTO> selectSendData(){
+        return mapper.selectSendData();
     }
 }

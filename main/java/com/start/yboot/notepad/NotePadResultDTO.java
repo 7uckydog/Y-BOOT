@@ -21,5 +21,7 @@ public class NotePadResultDTO {
     private String af10_avg;
     private String af_info_date;
     private String alert_rank;
-    private String alert_rank_name;
+    private String rank_name;
+    private String rank_info;
+    private String avg_info;
 }

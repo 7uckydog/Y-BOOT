@@ -47,7 +47,7 @@
            OR pm10 IS NULL
     </insert>
 
-    <!-- 경보 발령 추출 데이터 INSERT   -->
+    <!-- 경보 발령 추출 데이터 INSERT -->
     <insert id="insertFitData" parameterType="String">
         <!-- SELECT한 데이터 INSERT -->
         INSERT INTO send_data (org_seq
@@ -104,4 +104,23 @@
              ) C
         WHERE C.ALERT_RANK IS NOT NULL
     </insert>
+
+    <!-- 경보 발령 데이터 SELECT -->
+    <select id="selectSendData" resultType="com.start.yboot.notepad.NotePadResultDTO">
+        SELECT O.location
+             , O.info_date
+             , S.af_info_date
+             , S.alert_rank
+             , R.rank_name
+             , R.rank_info
+             , CASE WHEN S.alert_rank = '1' OR S.alert_rank = '3' THEN (SELECT af25_avg FROM ORIGIN_dATA WHERE data_seq = O.data_seq)
+                    WHEN S.alert_rank = '2' OR S.alert_rank = '4' THEN (SELECT af10_avg FROM ORIGIN_dATA WHERE data_seq = O.data_seq)
+                END AS AVG_INFO
+        FROM origin_data O
+           , send_data S
+           , rank_info R
+        WHERE O.data_seq = S.org_seq
+          AND R.alert_rank = S.alert_rank
+        ORDER BY O.info_date
+    </select>
 </mapper>
