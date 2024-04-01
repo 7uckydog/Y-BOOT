@@ -1,5 +1,6 @@
 'EXAM Project'
 -
+- * 로그: https://github.com/7uckydog/EXAM
 
 
  [프로그램 정보]

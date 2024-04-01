@@ -31,6 +31,7 @@ public class TcpServer {
         serverSocket.bind(new InetSocketAddress(TCP_PORT));
         System.out.println("starting tcp server : "+ TCP_PORT);
 
+        // 항상 true (서버 띄워두기)
         while(true) {
             // 서버에서 요청 accept 대기
             Socket socket = serverSocket.accept();
@@ -44,7 +45,7 @@ public class TcpServer {
         InputStream in = socket.getInputStream();
 
         int readCnt = in.read(recv);
-        System.out.println("read Length : " + readCnt);
+//        System.out.println("read Length : " + readCnt);
 
         byte[] conv = Arrays.copyOf(recv,readCnt);
 
