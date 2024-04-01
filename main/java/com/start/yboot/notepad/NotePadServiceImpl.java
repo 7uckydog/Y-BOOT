@@ -77,6 +77,8 @@ public class NotePadServiceImpl implements NotePadService{
 
     @Override
     public List<NotePadResultDTO> selectSendData(){
-        return mapper.selectSendData();
+        List<NotePadResultDTO> list = mapper.selectSendData();
+        logger.info("size = " + list.size());
+        return list;
     }
 }

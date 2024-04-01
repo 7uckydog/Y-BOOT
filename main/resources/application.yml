@@ -1,0 +1,23 @@
+#default
+server:
+  port: 8888
+
+spring:
+  datasource:
+#    driver-class-name: oracle.jdbc.driver.OracleDriver
+#    url: jdbc:oracle:thin:@localhost:1521:xe
+    url: jdbc:log4jdbc:oracle:thin:@localhost:1521:xe
+    username: khtest
+    password: 1234
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+
+logging:
+  config: classpath:logback/logback-spring.xml
+
+tcp:
+  server:
+    host: localhost
+    port: 8810
